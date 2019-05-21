@@ -18,20 +18,21 @@ def extractIMGs(pdf):
     oldset = set(
         chain(folder.glob('*.jpg'), folder.glob('*.jpeg'),
               folder.glob('*.png')))
-    os.system(f"mutool extract {pdf}")
+    os.system(f'mutool extract "{pdf}"')
     newset = set(
         chain(folder.glob('*.jpg'), folder.glob('*.jpeg'),
               folder.glob('*.png')))
     imgset = newset - oldset
     imgnum = len(imgset)
+    print(imgnum)
 
     digit_width = len(str(len(imgset)))
 
     result = []
-    for i, img in enumerate(imgset):
+    for i, img in enumerate(sorted(imgset)):
         extname = WindowsPath(img).suffix
         if imgnum > 1:
-            imgname = f"{name}_{i:0{digit_width}{extname}}"
+            imgname = f"{name}_{i:0{digit_width}}{extname}"
         else:
             imgname = f"{name}{extname}"
         newimg = pdf.with_name(imgname)
@@ -44,8 +45,8 @@ def silmIMG(img):
     imgsize = os.path.getsize(img)
     quality = LIMIT_SIZE_OF_IMG / imgsize * 100
     os.system(
-        f"magick -compress JPEG -quality {quality} {img} -colors 8 new_{img}")
-    shutil.move(f"new_{img}", f"{img}")
+        f'magick -compress JPEG -quality {quality} "{img}" -colors 8 "new_{img}"')
+    shutil.move(f'new_{img}', f'{img}')
 
 
 def getSlimIMGsFromPDFsInFolder(folder):
@@ -59,3 +60,4 @@ def getSlimIMGsFromPDFsInFolder(folder):
 if __name__ == "__main__":
     workdir = WindowsPath('.')
     getSlimIMGsFromPDFsInFolder(workdir)
+    os.system('pause')
