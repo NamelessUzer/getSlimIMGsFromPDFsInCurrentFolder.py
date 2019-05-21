@@ -6,7 +6,7 @@ import shutil
 from itertools import chain
 from pathlib import WindowsPath
 
-LIMIT_SIZE_OF_IMG = 1024 * 1024 * 0.7
+LIMIT_SIZE_OF_IMG = 1024 * 1024 * 0.8
 
 
 def extractIMGs(pdf):
@@ -43,9 +43,12 @@ def extractIMGs(pdf):
 
 def silmIMG(img):
     imgsize = os.path.getsize(img)
-    quality = LIMIT_SIZE_OF_IMG / imgsize * 100
+    quality = min(LIMIT_SIZE_OF_IMG / imgsize * 100, 100)
+    print(f"Compressing {img}")
     os.system(
-        f'magick -compress JPEG -quality {quality} "{img}" -colors 8 "new_{img}"')
+        #  f'magick "{img}" -compress JPEG -quality {quality} -colors 8 -density 96 "new_{img}"')
+        #  f'magick "{img}" -compress JPEG -quality {quality} -colorspace Gray -density 72 -resize 794x1123 "new_{img}"')
+        f'magick "{img}" -compress JPEG -quality {quality} -colorspace Gray -density 96 -resize 1500x1500 "new_{img}"')
     shutil.move(f'new_{img}', f'{img}')
 
 
